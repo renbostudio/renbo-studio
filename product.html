@@ -1,0 +1,795 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Produk | RENBO STUDIO</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff}
+a{color:inherit;text-decoration:none}
+
+header{
+    min-height:75px;padding:0 6%;display:flex;align-items:center;
+    justify-content:space-between;border-bottom:1px solid #eee;gap:20px;
+    background:#fff
+}
+.logo{font-size:23px;font-weight:900;letter-spacing:2px;white-space:nowrap}
+nav{display:flex;gap:25px;font-size:12px;font-weight:bold}
+nav a:hover{opacity:.5}
+.header-actions{display:flex;gap:10px;align-items:center}
+.icon-link{
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;flex-shrink:0;background:#fff;transition:.2s
+}
+.icon-link:hover{transform:scale(1.08)}
+.icon-link img{width:100%;height:100%;object-fit:cover;display:block}
+
+main{max-width:1200px;margin:auto;padding:35px 6% 70px}
+.back{display:inline-block;font-size:13px;font-weight:bold;margin-bottom:30px}
+
+.product-layout{
+    display:grid;grid-template-columns:1.1fr 1fr;gap:55px
+}
+.gallery{width:100%;min-width:0}
+.gallery-main{
+    position:relative;width:100%;aspect-ratio:1/1;background:#f3f3f3;
+    overflow:hidden;border-radius:3px;touch-action:pan-y;cursor:zoom-in
+}
+.gallery-main img{
+    width:100%;height:100%;object-fit:contain;display:block;
+    user-select:none;-webkit-user-drag:none
+}
+.arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:42px;height:42px;border:0;border-radius:50%;
+    background:rgba(255,255,255,.9);font-size:25px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center
+}
+.arrow.left{left:12px}
+.arrow.right{right:12px}
+.photo-counter{
+    position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.65);
+    color:white;padding:7px 12px;border-radius:20px;font-size:12px
+}
+.zoom-hint{
+    position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.65);
+    color:white;padding:7px 11px;border-radius:20px;font-size:11px
+}
+.thumbnails{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:8px}
+.thumbnail{
+    width:75px;height:75px;flex:0 0 75px;object-fit:cover;
+    background:#eee;border:2px solid transparent;border-radius:4px;cursor:pointer
+}
+.thumbnail.active{border-color:#111}
+
+.zoom-overlay{
+    display:none;position:fixed;inset:0;z-index:1000;
+    background:rgba(0,0,0,.96);align-items:center;
+    justify-content:center;padding:65px
+}
+.zoom-overlay.show{display:flex}
+.zoom-image{max-width:100%;max-height:100%;object-fit:contain;user-select:none}
+.zoom-close{
+    position:absolute;top:20px;right:25px;width:45px;height:45px;
+    border:0;border-radius:50%;background:#fff;color:#111;font-size:25px;cursor:pointer
+}
+.zoom-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:45px;height:45px;border:0;border-radius:50%;
+    background:rgba(255,255,255,.9);font-size:27px;cursor:pointer
+}
+.zoom-prev{left:20px}
+.zoom-next{right:20px}
+.zoom-counter{
+    position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+    color:white;font-size:13px
+}
+
+.video-box{margin-top:20px}
+.video-box h3{font-size:14px;margin-bottom:12px}
+.video-box video{width:100%;max-height:450px;background:#111;border-radius:5px}
+
+.product-info{padding-top:15px}
+.category{font-size:12px;color:#777;text-transform:uppercase;letter-spacing:1px}
+h1{font-size:clamp(30px,4vw,45px);font-weight:900;margin-top:12px;line-height:1.1}
+.price{font-size:23px;font-weight:bold;margin-top:20px}
+.stock{
+    display:inline-block;font-size:12px;font-weight:bold;margin-top:20px;
+    padding:9px 14px;background:#eee;border-radius:20px
+}
+.description{font-size:14px;line-height:1.9;color:#555;margin-top:25px;white-space:pre-line}
+.actions{display:flex;gap:10px;margin-top:30px;flex-wrap:wrap}
+.button{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    padding:12px 20px;border-radius:30px;
+    background:#111;color:white;font-size:12px;font-weight:bold;text-align:center
+}
+.button img{width:25px;height:25px;object-fit:cover;border-radius:50%}
+.button.whatsapp{background:#25d366}
+.button.shopee{background:#ee4d2d}
+.notice{font-size:12px;color:#777;margin-top:15px;line-height:1.6}
+.state-message{padding:60px 10px;text-align:center;color:#777}
+
+/* LIKE */
+.engagement{
+    margin-top:35px;padding:22px 0;border-top:1px solid #eee;
+    border-bottom:1px solid #eee
+}
+.like-button{
+    display:inline-flex;align-items:center;gap:9px;
+    border:1px solid #ddd;background:#fff;padding:12px 20px;
+    border-radius:30px;font-size:14px;font-weight:bold;cursor:pointer
+}
+.like-button.liked{color:#e53955;border-color:#e53955;background:#fff7f8}
+.like-button:disabled{opacity:.6;cursor:wait}
+.like-count{font-size:13px;color:#777;margin-left:10px}
+
+/* KOMENTAR */
+.comments-section{margin-top:55px}
+.comments-section h2{font-size:25px;font-weight:900}
+.comments-intro{font-size:13px;color:#777;margin-top:8px;line-height:1.6}
+.comment-form{margin-top:25px;padding:22px;background:#f6f6f6}
+.comment-form label{display:block;font-size:12px;font-weight:bold;margin-bottom:8px}
+.comment-form input,.comment-form textarea{
+    width:100%;padding:13px;border:1px solid #ddd;background:#fff;
+    font-family:Arial;font-size:14px;outline:none;margin-bottom:15px
+}
+.comment-form textarea{min-height:110px;resize:vertical}
+.comment-submit{
+    padding:13px 22px;border:0;border-radius:25px;
+    background:#111;color:#fff;font-size:12px;font-weight:bold;cursor:pointer
+}
+.comment-submit:disabled{opacity:.5;cursor:wait}
+.comment-status{font-size:12px;margin-top:12px;line-height:1.6}
+.comment-list{margin-top:25px}
+.comment-item{padding:18px 0;border-bottom:1px solid #eee}
+.comment-name{font-size:14px;font-weight:bold}
+.comment-date{font-size:11px;color:#999;margin-top:5px}
+.comment-text{font-size:13px;color:#555;line-height:1.7;margin-top:10px;white-space:pre-line}
+.no-comments{font-size:13px;color:#888;padding:20px 0}
+
+footer{background:#f5f5f5;padding:35px 6%;font-size:12px;color:#777}
+.footer-content{display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap}
+footer h3{font-size:19px;color:#111;margin-bottom:10px}
+footer p{line-height:1.9}
+.footer-social{display:flex;gap:12px;margin-top:14px}
+.footer-social a{
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;background:#fff;transition:.2s
+}
+.footer-social a:hover{transform:scale(1.08)}
+.footer-social img{width:100%;height:100%;object-fit:cover}
+.footer-bottom{border-top:1px solid #ddd;margin-top:25px;padding-top:20px}
+
+@media(max-width:750px){
+    header{padding:12px 5%;flex-wrap:wrap;min-height:75px}
+    nav{order:3;width:100%;gap:13px;font-size:10px;overflow-x:auto;padding-bottom:5px}
+    .logo{font-size:18px}
+    .icon-link{width:35px;height:35px}
+    .header-actions{margin-left:auto}
+    main{padding:25px 5% 50px}
+    .product-layout{grid-template-columns:1fr;gap:25px}
+    .product-info{padding-top:0}
+    .thumbnail{width:65px;height:65px;flex-basis:65px}
+    .arrow{width:36px;height:36px;font-size:21px}
+    .zoom-overlay{padding:65px 12px 55px}
+    .zoom-close{top:12px;right:12px}
+    .zoom-prev{left:8px}
+    .zoom-next{right:8px}
+    .comments-section h2{font-size:21px}
+    .comment-form{padding:16px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="index.html" class="logo">RENBO STUDIO</a>
+
+    <nav>
+        <a href="index.html">BERANDA</a>
+        <a href="keychain.html">GANTUNGAN KUNCI</a>
+        <a href="3dprint.html">3D PRINT</a>
+    </nav>
+
+    <div class="header-actions">
+        <a class="icon-link"
+           href="https://s.shopee.co.id/6L5llZO3bk"
+           target="_blank" rel="noopener" aria-label="Shopee">
+            <img src="IMG_9864.jpeg" alt="Shopee">
+        </a>
+
+        <a class="icon-link"
+           href="https://wa.me/message/C2DFXGQ6SEMGB1"
+           target="_blank" rel="noopener" aria-label="WhatsApp">
+            <img src="IMG_9865.webp" alt="WhatsApp">
+        </a>
+    </div>
+</header>
+
+<main>
+    <a href="javascript:history.back()" class="back">← KEMBALI KE KATALOG</a>
+    <div id="productDetail" class="state-message">Memuat detail produk...</div>
+</main>
+
+<footer>
+    <div class="footer-content">
+        <div>
+            <h3>RENBO STUDIO</h3>
+            <p>Produk 3D Print & Custom Gantungan Kunci.</p>
+
+            <div class="footer-social">
+                <a href="https://s.shopee.co.id/6L5llZO3bk"
+                   target="_blank" rel="noopener" aria-label="Shopee">
+                    <img src="IMG_9864.jpeg" alt="Shopee">
+                </a>
+
+                <a href="https://wa.me/message/C2DFXGQ6SEMGB1"
+                   target="_blank" rel="noopener" aria-label="WhatsApp">
+                    <img src="IMG_9865.webp" alt="WhatsApp">
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <h3>MENU</h3>
+            <p>
+                <a href="index.html">Beranda</a><br>
+                <a href="keychain.html">Gantungan Kunci</a><br>
+                <a href="3dprint.html">3D Print</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 RENBO STUDIO. All Rights Reserved.
+    </div>
+</footer>
+
+<div class="zoom-overlay" id="zoomOverlay">
+    <button class="zoom-close" id="zoomClose" aria-label="Tutup">×</button>
+    <button class="zoom-arrow zoom-prev" id="zoomPrev" aria-label="Foto sebelumnya">‹</button>
+    <img class="zoom-image" id="zoomImage" alt="Foto produk diperbesar">
+    <button class="zoom-arrow zoom-next" id="zoomNext" aria-label="Foto berikutnya">›</button>
+    <div class="zoom-counter" id="zoomCounter"></div>
+</div>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+const container = document.getElementById('productDetail');
+const zoomOverlay = document.getElementById('zoomOverlay');
+const zoomImage = document.getElementById('zoomImage');
+const zoomCounter = document.getElementById('zoomCounter');
+
+const WHATSAPP_LINK = 'https://wa.me/message/C2DFXGQ6SEMGB1';
+const SHOPEE_LINK = 'https://s.shopee.co.id/6L5llZO3bk';
+const VISITOR_KEY = 'renbo_visitor_id';
+
+let currentIndex = 0;
+let productPhotos = [];
+let currentProduct = null;
+let visitorId = '';
+
+function getVisitorId() {
+    let id = localStorage.getItem(VISITOR_KEY);
+
+    if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem(VISITOR_KEY, id);
+    }
+
+    return id;
+}
+
+function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+    })[char]);
+}
+
+function formatPrice(price) {
+    return 'Rp ' + Number(price || 0).toLocaleString('id-ID');
+}
+
+function stockLabel(status) {
+    if (status === 'sold_out') return 'STOK HABIS';
+    if (status === 'coming_soon') return 'SEGERA HADIR';
+    return 'READY STOCK';
+}
+
+function showError(message) {
+    container.innerHTML = `
+        <div class="state-message">
+            <h2>Produk tidak ditemukan</h2>
+            <p style="margin-top:12px">${escapeHTML(message)}</p>
+            <a href="index.html" class="button" style="margin-top:25px;display:inline-block">
+                KEMBALI KE BERANDA
+            </a>
+        </div>
+    `;
+}
+
+function changePhoto(index) {
+    if (!productPhotos.length) return;
+
+    currentIndex = (index + productPhotos.length) % productPhotos.length;
+
+    const mainImage = document.getElementById('mainImage');
+    if (mainImage) mainImage.src = productPhotos[currentIndex];
+
+    document.querySelectorAll('.thumbnail').forEach((thumbnail, i) => {
+        thumbnail.classList.toggle('active', i === currentIndex);
+
+        if (i === currentIndex) {
+            thumbnail.scrollIntoView({
+                behavior:'smooth',block:'nearest',inline:'center'
+            });
+        }
+    });
+
+    const counter = document.getElementById('photoCounter');
+    if (counter) counter.textContent = `${currentIndex + 1} / ${productPhotos.length}`;
+
+    if (zoomOverlay.classList.contains('show')) updateZoom();
+}
+
+function updateZoom() {
+    if (!productPhotos.length) return;
+    zoomImage.src = productPhotos[currentIndex];
+    zoomCounter.textContent = `${currentIndex + 1} / ${productPhotos.length}`;
+}
+
+function openZoom() {
+    if (!productPhotos.length) return;
+    updateZoom();
+    zoomOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeZoom() {
+    zoomOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+/* LIKE PRODUK */
+async function loadLikes() {
+    const button = document.getElementById('likeButton');
+    const countElement = document.getElementById('likeCount');
+
+    const { count, error } = await supabase
+        .from('product_likes')
+        .select('*', { count:'exact', head:true })
+        .eq('product_id', currentProduct.id);
+
+    if (error) {
+        console.error('Gagal memuat Like:', error);
+        countElement.textContent = 'Jumlah Like tidak tersedia';
+        return;
+    }
+
+    countElement.textContent = `${count || 0} Like`;
+
+    const { data: myLike, error: likeError } = await supabase
+        .from('product_likes')
+        .select('id')
+        .eq('product_id', currentProduct.id)
+        .eq('visitor_id', visitorId)
+        .maybeSingle();
+
+    if (!likeError && myLike) {
+        button.classList.add('liked');
+        button.innerHTML = '♥ <span>Disukai</span>';
+    }
+}
+
+async function toggleLike() {
+    const button = document.getElementById('likeButton');
+    const countElement = document.getElementById('likeCount');
+
+    button.disabled = true;
+
+    const { data, error } = await supabase.rpc('toggle_product_like', {
+        p_product_id: currentProduct.id,
+        p_visitor_id: visitorId
+    });
+
+    button.disabled = false;
+
+    if (error) {
+        console.error('Gagal mengubah Like:', error);
+        alert('Like belum berhasil. Coba lagi.');
+        return;
+    }
+
+    const { data: myLike } = await supabase
+        .from('product_likes')
+        .select('id')
+        .eq('product_id', currentProduct.id)
+        .eq('visitor_id', visitorId)
+        .maybeSingle();
+
+    if (myLike) {
+        button.classList.add('liked');
+        button.innerHTML = '♥ <span>Disukai</span>';
+    } else {
+        button.classList.remove('liked');
+        button.innerHTML = '♡ <span>Suka</span>';
+    }
+
+    countElement.textContent = `${data || 0} Like`;
+}
+
+/* KOMENTAR */
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+        day:'numeric',month:'long',year:'numeric'
+    });
+}
+
+async function loadComments() {
+    const list = document.getElementById('commentList');
+
+    list.innerHTML = '<p class="no-comments">Memuat komentar...</p>';
+
+    const { data, error } = await supabase
+        .from('product_comments')
+        .select('visitor_name, comment, created_at')
+        .eq('product_id', currentProduct.id)
+        .eq('is_approved', true)
+        .order('created_at', { ascending:false });
+
+    if (error) {
+        console.error('Gagal memuat komentar:', error);
+        list.innerHTML = '<p class="no-comments">Komentar belum dapat dimuat.</p>';
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        list.innerHTML = '<p class="no-comments">Belum ada komentar. Jadilah yang pertama berkomentar!</p>';
+        return;
+    }
+
+    list.innerHTML = data.map(item => `
+        <article class="comment-item">
+            <p class="comment-name">${escapeHTML(item.visitor_name)}</p>
+            <p class="comment-date">${formatDate(item.created_at)}</p>
+            <p class="comment-text">${escapeHTML(item.comment)}</p>
+        </article>
+    `).join('');
+}
+
+async function submitComment(event) {
+    event.preventDefault();
+
+    const nameInput = document.getElementById('commentName');
+    const textInput = document.getElementById('commentText');
+    const status = document.getElementById('commentStatus');
+    const submitButton = document.getElementById('commentSubmit');
+
+    const name = nameInput.value.trim();
+    const comment = textInput.value.trim();
+
+    if (!name || !comment) {
+        status.textContent = 'Nama dan komentar wajib diisi.';
+        return;
+    }
+
+    if (name.length > 50 || comment.length > 1000) {
+        status.textContent = 'Nama maksimal 50 karakter dan komentar maksimal 1.000 karakter.';
+        return;
+    }
+
+    submitButton.disabled = true;
+    status.textContent = 'Mengirim komentar...';
+
+    const { error } = await supabase
+        .from('product_comments')
+        .insert({
+            product_id: currentProduct.id,
+            visitor_id: visitorId,
+            visitor_name: name,
+            comment: comment,
+            is_approved: false
+        });
+
+    submitButton.disabled = false;
+
+    if (error) {
+        console.error('Gagal mengirim komentar:', error);
+        status.textContent = 'Komentar gagal dikirim. Silakan coba lagi.';
+        return;
+    }
+
+    textInput.value = '';
+    status.textContent = 'Komentar berhasil dikirim dan menunggu persetujuan admin.';
+}
+
+/* MEMUAT PRODUK */
+async function loadProduct() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
+
+    if (!slug) {
+        showError('Alamat produk tidak lengkap.');
+        return;
+    }
+
+    visitorId = getVisitorId();
+
+    const { data:product, error } = await supabase
+        .from('products')
+        .select('*, categories(name)')
+        .eq('slug', slug)
+        .eq('is_published', true)
+        .maybeSingle();
+
+    if (error) {
+        console.error(error);
+        showError('Terjadi masalah saat memuat produk. Coba refresh halaman.');
+        return;
+    }
+
+    if (!product) {
+        showError('Produk belum dipublikasikan atau tidak tersedia.');
+        return;
+    }
+
+    currentProduct = product;
+
+    productPhotos = Array.isArray(product.photos)
+        ? product.photos.filter(photo => typeof photo === 'string' && photo)
+        : [];
+
+    currentIndex = 0;
+
+    const name = escapeHTML(product.name);
+    const category = escapeHTML(product.categories?.name || 'Produk Renbo Studio');
+    const description = escapeHTML(product.description || 'Belum ada deskripsi produk.');
+    const stock = escapeHTML(stockLabel(product.stock_status));
+
+    const galleryHTML = productPhotos.length ? `
+        <div class="gallery">
+            <div class="gallery-main" id="galleryMain">
+                <img id="mainImage" src="${escapeHTML(productPhotos[0])}" alt="${name}">
+                <span class="zoom-hint">⌕ KLIK UNTUK MEMPERBESAR</span>
+
+                ${productPhotos.length > 1 ? `
+                    <button class="arrow left" id="prevPhoto" aria-label="Foto sebelumnya">‹</button>
+                    <button class="arrow right" id="nextPhoto" aria-label="Foto berikutnya">›</button>
+                    <div class="photo-counter" id="photoCounter">1 / ${productPhotos.length}</div>
+                ` : ''}
+            </div>
+
+            ${productPhotos.length > 1 ? `
+                <div class="thumbnails">
+                    ${productPhotos.map((photo,index) => `
+                        <img class="thumbnail ${index === 0 ? 'active' : ''}"
+                             src="${escapeHTML(photo)}"
+                             alt="Foto ${index + 1}"
+                             data-index="${index}"
+                             loading="lazy">
+                    `).join('')}
+                </div>
+            ` : ''}
+        </div>
+    ` : `
+        <div class="gallery">
+            <div class="gallery-main" style="display:flex;align-items:center;justify-content:center;color:#888">
+                FOTO BELUM TERSEDIA
+            </div>
+        </div>
+    `;
+
+    const videoHTML = product.video_url ? `
+        <div class="video-box">
+            <h3>VIDEO PRODUK</h3>
+            <video controls preload="metadata" playsinline>
+                <source src="${escapeHTML(product.video_url)}">
+                Browser kamu tidak mendukung video.
+            </video>
+        </div>
+    ` : '';
+
+    container.className = '';
+
+    container.innerHTML = `
+        <div class="product-layout">
+            <div>
+                ${galleryHTML}
+                ${videoHTML}
+            </div>
+
+            <div class="product-info">
+                <p class="category">${category}</p>
+                <h1>${name}</h1>
+                <p class="price">${formatPrice(product.price)}</p>
+                <span class="stock">${stock}</span>
+                <p class="description">${description}</p>
+
+                <div class="actions">
+                    <a href="${WHATSAPP_LINK}" target="_blank" rel="noopener"
+                       class="button whatsapp">
+                        <img src="IMG_9865.webp" alt="">
+                        PESAN VIA WHATSAPP
+                    </a>
+
+                    <a href="${SHOPEE_LINK}" target="_blank" rel="noopener"
+                       class="button shopee">
+                        <img src="IMG_9864.jpeg" alt="">
+                        KUNJUNGI SHOPEE
+                    </a>
+                </div>
+
+                <p class="notice">
+                    Untuk informasi produk, stok, dan pemesanan,
+                    silakan hubungi Renbo Studio.
+                </p>
+
+                <div class="engagement">
+                    <button type="button" class="like-button" id="likeButton">
+                        ♡ <span>Suka</span>
+                    </button>
+                    <span class="like-count" id="likeCount">Memuat Like...</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="comments-section">
+            <h2>KOMENTAR</h2>
+            <p class="comments-intro">
+                Punya pendapat atau pertanyaan tentang produk ini? Tulis komentarmu di bawah.
+                Komentar akan ditampilkan setelah disetujui admin.
+            </p>
+
+            <form class="comment-form" id="commentForm">
+                <label for="commentName">NAMA</label>
+                <input
+                    type="text"
+                    id="commentName"
+                    maxlength="50"
+                    placeholder="Masukkan nama kamu"
+                    required
+                >
+
+                <label for="commentText">KOMENTAR</label>
+                <textarea
+                    id="commentText"
+                    maxlength="1000"
+                    placeholder="Tulis komentar kamu..."
+                    required
+                ></textarea>
+
+                <button type="submit" class="comment-submit" id="commentSubmit">
+                    KIRIM KOMENTAR
+                </button>
+
+                <p class="comment-status" id="commentStatus"></p>
+            </form>
+
+            <div class="comment-list" id="commentList">
+                <p class="no-comments">Memuat komentar...</p>
+            </div>
+        </section>
+    `;
+
+    document.title = product.name + ' | RENBO STUDIO';
+
+    document.getElementById('likeButton').addEventListener('click', toggleLike);
+    document.getElementById('commentForm').addEventListener('submit', submitComment);
+
+    loadLikes();
+    loadComments();
+
+    document.getElementById('prevPhoto')?.addEventListener('click', event => {
+        event.stopPropagation();
+        changePhoto(currentIndex - 1);
+    });
+
+    document.getElementById('nextPhoto')?.addEventListener('click', event => {
+        event.stopPropagation();
+        changePhoto(currentIndex + 1);
+    });
+
+    document.querySelectorAll('.thumbnail').forEach(thumbnail => {
+        thumbnail.addEventListener('click', () => {
+            changePhoto(Number(thumbnail.dataset.index));
+        });
+    });
+
+    document.getElementById('galleryMain')?.addEventListener('click', event => {
+        if (event.target.closest('button')) return;
+        openZoom();
+    });
+
+    const gallery = document.getElementById('galleryMain');
+
+    if (gallery && productPhotos.length > 1) {
+        let startX = 0;
+        let startY = 0;
+
+        gallery.addEventListener('touchstart', event => {
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+        }, {passive:true});
+
+        gallery.addEventListener('touchend', event => {
+            const diffX = event.changedTouches[0].clientX - startX;
+            const diffY = event.changedTouches[0].clientY - startY;
+
+            if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+                changePhoto(diffX < 0 ? currentIndex + 1 : currentIndex - 1);
+            }
+        }, {passive:true});
+
+        let mouseStart = null;
+
+        gallery.addEventListener('mousedown', event => {
+            mouseStart = event.clientX;
+        });
+
+        gallery.addEventListener('mouseup', event => {
+            if (mouseStart === null) return;
+            const diff = event.clientX - mouseStart;
+
+            if (Math.abs(diff) > 60) {
+                changePhoto(diff < 0 ? currentIndex + 1 : currentIndex - 1);
+            }
+
+            mouseStart = null;
+        });
+    }
+}
+
+/* TOMBOL ZOOM */
+document.getElementById('zoomClose').addEventListener('click', closeZoom);
+
+document.getElementById('zoomPrev').addEventListener('click', () => {
+    changePhoto(currentIndex - 1);
+});
+
+document.getElementById('zoomNext').addEventListener('click', () => {
+    changePhoto(currentIndex + 1);
+});
+
+zoomOverlay.addEventListener('click', event => {
+    if (event.target === zoomOverlay) closeZoom();
+});
+
+document.addEventListener('keydown', event => {
+    if (!zoomOverlay.classList.contains('show')) return;
+
+    if (event.key === 'Escape') closeZoom();
+    if (event.key === 'ArrowLeft') changePhoto(currentIndex - 1);
+    if (event.key === 'ArrowRight') changePhoto(currentIndex + 1);
+});
+
+let zoomStartX = 0;
+
+zoomOverlay.addEventListener('touchstart', event => {
+    zoomStartX = event.touches[0].clientX;
+}, {passive:true});
+
+zoomOverlay.addEventListener('touchend', event => {
+    const diff = event.changedTouches[0].clientX - zoomStartX;
+
+    if (Math.abs(diff) > 60) {
+        changePhoto(diff < 0 ? currentIndex + 1 : currentIndex - 1);
+    }
+}, {passive:true});
+
+loadProduct();
+</script>
+
+</body>
+</html>

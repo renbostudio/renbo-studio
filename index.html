@@ -1,0 +1,538 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RENBO STUDIO | 3D Print & Custom Gantungan Kunci</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+
+header{
+    min-height:76px;padding:0 6%;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:25px;border-bottom:1px solid #eee;
+    background:#fff;position:sticky;top:0;z-index:20
+}
+.logo{font-size:23px;font-weight:900;letter-spacing:2px;white-space:nowrap}
+nav{display:flex;gap:28px;font-size:11px;font-weight:bold;letter-spacing:.5px}
+nav a:hover{opacity:.5}
+.header-actions{display:flex;align-items:center;gap:9px}
+.search{
+    width:155px;padding:11px 15px;border:1px solid #ddd;
+    border-radius:30px;outline:none;font-size:12px
+}
+.icon-link{
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;background:#fff;flex-shrink:0;
+    transition:.2s
+}
+.icon-link:hover{transform:scale(1.08)}
+.icon-link img{width:100%;height:100%;object-fit:cover;display:block}
+.shopee{background:#ee4d2d}
+.whatsapp{background:#25d366}
+
+.hero{
+    padding:65px 6% 55px;
+    display:grid;grid-template-columns:1fr 1fr;
+    align-items:center;gap:45px;min-height:470px
+}
+.hero-label{font-size:11px;letter-spacing:2px;font-weight:bold;color:#777}
+.hero h1{
+    font-size:clamp(38px,5.5vw,72px);
+    line-height:.98;letter-spacing:-3px;
+    font-weight:900;margin-top:20px
+}
+.hero p{font-size:15px;line-height:1.8;color:#666;margin-top:22px;max-width:430px}
+.hero-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+.btn{
+    display:inline-block;padding:15px 24px;border-radius:30px;
+    background:#111;color:white;font-size:11px;font-weight:bold;
+    border:1px solid #111;transition:.2s
+}
+.btn:hover{opacity:.75}
+.btn.light{background:white;color:#111}
+.hero-visual{
+    position:relative;width:100%;aspect-ratio:1.1/1;
+    background:#f2f2f2;overflow:hidden
+}
+.hero-visual img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-visual .no-photo{
+    height:100%;display:flex;align-items:center;justify-content:center;
+    color:#999;font-size:12px;letter-spacing:1px
+}
+.hero-caption{
+    position:absolute;left:18px;bottom:18px;
+    background:white;padding:12px 16px;
+    font-size:11px;font-weight:bold;letter-spacing:1px
+}
+
+.section{padding:45px 6% 65px}
+.section-heading{
+    display:flex;align-items:end;justify-content:space-between;
+    gap:15px;margin-bottom:25px
+}
+.section-heading h2{font-size:27px;font-weight:900;letter-spacing:-.8px}
+.section-heading p{font-size:12px;color:#777;margin-top:7px}
+.section-heading>a{font-size:11px;font-weight:bold;text-decoration:underline}
+
+.category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.category-card{
+    position:relative;min-height:350px;
+    overflow:hidden;background:#eee;display:flex;align-items:end
+}
+.category-card img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;transition:transform .5s
+}
+.category-card:hover img{transform:scale(1.04)}
+.category-card:after{
+    content:"";position:absolute;inset:35% 0 0;
+    background:linear-gradient(transparent,rgba(0,0,0,.55))
+}
+.category-info{
+    position:relative;z-index:1;color:white;padding:25px
+}
+.category-info h3{font-size:27px;font-weight:900}
+.category-info p{font-size:12px;margin-top:8px}
+.category-info span{
+    display:inline-block;margin-top:17px;font-size:11px;
+    font-weight:bold;border-bottom:1px solid white;padding-bottom:4px
+}
+.category-fallback{
+    position:absolute;inset:0;display:flex;align-items:center;
+    justify-content:center;font-size:12px;color:#999
+}
+
+.product-grid{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 16px
+}
+.product-card{min-width:0}
+.product-image-link{display:block;overflow:hidden;background:#f3f3f3}
+.product-photo{
+    display:block;width:100%;aspect-ratio:1/1;
+    object-fit:cover;transition:transform .4s
+}
+.product-image-link:hover .product-photo{transform:scale(1.04)}
+.product-placeholder{
+    width:100%;aspect-ratio:1/1;background:#f2f2f2;
+    display:flex;align-items:center;justify-content:center;
+    color:#999;font-size:11px
+}
+.product-card h3{font-size:14px;margin-top:13px;line-height:1.5}
+.product-card h3 a:hover{text-decoration:underline}
+.product-category{font-size:11px;color:#777;margin-top:5px}
+.product-price{font-size:14px;font-weight:bold;margin-top:8px}
+.product-stock{font-size:10px;color:#777;margin-top:7px}
+.product-actions{display:flex;gap:7px;margin-top:12px}
+.product-actions a{
+    flex:1;text-align:center;padding:11px 5px;
+    border-radius:25px;background:#111;color:white;
+    font-size:10px;font-weight:bold
+}
+.product-actions a.wa{background:#25d366}
+.empty-message{color:#777;font-size:13px;padding:20px 0;line-height:1.7}
+
+.feature{
+    margin:0 6% 65px;background:#111;color:white;
+    padding:65px 25px;text-align:center
+}
+.feature h2{font-size:clamp(28px,4.5vw,48px);font-weight:900}
+.feature p{font-size:13px;color:#ccc;margin-top:13px}
+.feature .btn{background:white;color:#111;margin-top:25px}
+
+.contact{text-align:center;padding:25px 6% 65px}
+.contact h2{font-size:27px;font-weight:900}
+.contact p{color:#777;margin:12px 0 25px;font-size:13px}
+.contact-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.contact-buttons a{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:12px 22px;color:white;border-radius:30px;
+    font-size:11px;font-weight:bold
+}
+.contact-buttons .shop{background:#ee4d2d}
+.contact-buttons .chat{background:#25d366}
+.contact-buttons img{width:25px;height:25px;object-fit:cover;border-radius:50%}
+
+footer{background:#f5f5f5;padding:45px 6%}
+.footer-content{display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap}
+footer h3{font-size:19px;margin-bottom:12px}
+footer p{font-size:12px;color:#666;line-height:2}
+.footer-social{display:flex;gap:12px;margin-top:15px}
+.footer-social a{
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;background:#fff
+}
+.footer-social img{width:100%;height:100%;object-fit:cover}
+.footer-bottom{
+    border-top:1px solid #ddd;margin-top:30px;
+    padding-top:20px;font-size:11px;color:#777
+}
+
+@media(max-width:900px){
+    header{flex-wrap:wrap;padding:16px 5%}
+    nav{order:3;width:100%;overflow-x:auto;padding-bottom:5px}
+    .header-actions{margin-left:auto}
+    .hero{padding-left:5%;padding-right:5%;gap:25px}
+    .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .section{padding-left:5%;padding-right:5%}
+}
+@media(max-width:600px){
+    .logo{font-size:19px}
+    .search{width:105px}
+    .icon-link{width:35px;height:35px}
+    .hero{grid-template-columns:1fr;padding-top:42px;gap:28px}
+    .hero h1{letter-spacing:-1.5px}
+    .hero-visual{aspect-ratio:1.1/1}
+    .category-grid{gap:10px}
+    .category-card{min-height:230px}
+    .category-info{padding:13px}
+    .category-info h3{font-size:17px}
+    .category-info p{font-size:10px;line-height:1.5}
+    .section{padding-top:30px;padding-bottom:45px}
+    .section-heading h2{font-size:21px}
+    .product-grid{gap:22px 12px}
+    .product-card h3{font-size:12px}
+    .product-actions{gap:5px}
+    .product-actions a{font-size:9px;padding:10px 3px}
+    .feature{margin:0 5% 45px;padding:48px 18px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="index.html" class="logo">RENBO STUDIO</a>
+
+    <nav>
+        <a href="index.html">BERANDA</a>
+        <a href="keychain.html">GANTUNGAN KUNCI</a>
+        <a href="3dprint.html">3D PRINT</a>
+    </nav>
+
+    <div class="header-actions">
+        <input id="searchInput" class="search" type="search" placeholder="Cari produk...">
+
+        <a class="icon-link shopee"
+           href="https://s.shopee.co.id/6L5llZO3bk"
+           target="_blank" rel="noopener" aria-label="Shopee">
+            <img src="IMG_9864.jpeg" alt="Shopee">
+        </a>
+
+        <a class="icon-link whatsapp"
+           href="https://wa.me/message/C2DFXGQ6SEMGB1"
+           target="_blank" rel="noopener" aria-label="WhatsApp">
+            <img src="IMG_9865.webp" alt="WhatsApp">
+        </a>
+    </div>
+</header>
+
+<main>
+
+<section class="hero">
+    <div>
+        <span class="hero-label">WELCOME TO RENBO STUDIO</span>
+        <h1>IDE UNIK.<br>JADI PRODUK.</h1>
+        <p>Temukan berbagai produk 3D Print fungsional dan gantungan kunci dengan desain menarik.</p>
+
+        <div class="hero-buttons">
+            <a href="3dprint.html" class="btn">JELAJAHI 3D PRINT</a>
+            <a href="keychain.html" class="btn light">GANTUNGAN KUNCI</a>
+        </div>
+    </div>
+
+    <a href="3dprint.html" class="hero-visual" id="heroVisual">
+        <div class="no-photo">RENBO STUDIO</div>
+        <span class="hero-caption">EXPLORE OUR PRODUCTS ↗</span>
+    </a>
+</section>
+
+<section class="section">
+    <div class="section-heading">
+        <div>
+            <h2>JELAJAHI KATEGORI</h2>
+            <p>Pilih koleksi yang ingin kamu lihat.</p>
+        </div>
+    </div>
+
+    <div class="category-grid">
+        <a href="keychain.html" class="category-card" id="keychainCategory">
+            <div class="category-fallback">GANTUNGAN KUNCI</div>
+            <div class="category-info">
+                <h3>GANTUNGAN KUNCI</h3>
+                <p>Desain pilihan dan custom sesuai keinginan.</p>
+                <span>JELAJAHI KOLEKSI ↗</span>
+            </div>
+        </a>
+
+        <a href="3dprint.html" class="category-card" id="printCategory">
+            <div class="category-fallback">3D PRINT</div>
+            <div class="category-info">
+                <h3>3D PRINT</h3>
+                <p>Produk fungsional untuk aktivitas sehari-hari.</p>
+                <span>JELAJAHI KOLEKSI ↗</span>
+            </div>
+        </a>
+    </div>
+</section>
+
+<section class="section" id="featuredSection">
+    <div class="section-heading">
+        <div>
+            <h2>PRODUK PILIHAN</h2>
+            <p>Koleksi unggulan dari Renbo Studio.</p>
+        </div>
+        <a href="3dprint.html">LIHAT SEMUA PRODUK ↗</a>
+    </div>
+
+    <div id="featuredList" class="product-grid">
+        <p class="empty-message">Memuat produk...</p>
+    </div>
+</section>
+
+<section class="section" id="newSection">
+    <div class="section-heading">
+        <div>
+            <h2>PRODUK TERBARU</h2>
+            <p>Temukan produk yang baru ditambahkan.</p>
+        </div>
+    </div>
+
+    <div id="newList" class="product-grid">
+        <p class="empty-message">Memuat produk...</p>
+    </div>
+</section>
+
+<section class="feature">
+    <h2>CREATE. PRINT. INSPIRE.</h2>
+    <p>Temukan produk kreatif untuk melengkapi aktivitas sehari-hari.</p>
+    <a href="keychain.html" class="btn">JELAJAHI SEKARANG</a>
+</section>
+
+<section class="contact">
+    <h2>TERHUBUNG DENGAN KAMI</h2>
+    <p>Temukan produk kami di Shopee atau hubungi kami melalui WhatsApp.</p>
+
+    <div class="contact-buttons">
+        <a class="shop" href="https://s.shopee.co.id/6L5llZO3bk" target="_blank" rel="noopener">
+            <img src="IMG_9864.jpeg" alt="Shopee">
+            KUNJUNGI SHOPEE
+        </a>
+
+        <a class="chat" href="https://wa.me/message/C2DFXGQ6SEMGB1" target="_blank" rel="noopener">
+            <img src="IMG_9865.webp" alt="WhatsApp">
+            CHAT WHATSAPP
+        </a>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <div class="footer-content">
+        <div>
+            <h3>RENBO STUDIO</h3>
+            <p>Produk 3D Print & Custom Gantungan Kunci.</p>
+
+            <div class="footer-social">
+                <a href="https://s.shopee.co.id/6L5llZO3bk" target="_blank" rel="noopener" aria-label="Shopee">
+                    <img src="IMG_9864.jpeg" alt="Shopee">
+                </a>
+
+                <a href="https://wa.me/message/C2DFXGQ6SEMGB1" target="_blank" rel="noopener" aria-label="WhatsApp">
+                    <img src="IMG_9865.webp" alt="WhatsApp">
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <h3>MENU</h3>
+            <p>
+                <a href="index.html">Beranda</a><br>
+                <a href="keychain.html">Gantungan Kunci</a><br>
+                <a href="3dprint.html">3D Print</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 RENBO STUDIO. All Rights Reserved.
+    </div>
+</footer>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+const featuredList = document.getElementById('featuredList');
+const newList = document.getElementById('newList');
+const searchInput = document.getElementById('searchInput');
+
+const WHATSAPP_LINK = 'https://wa.me/message/C2DFXGQ6SEMGB1';
+const SHOPEE_LINK = 'https://s.shopee.co.id/6L5llZO3bk';
+
+let allProducts = [];
+
+function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+    })[char]);
+}
+
+function formatPrice(price) {
+    return 'Rp ' + Number(price || 0).toLocaleString('id-ID');
+}
+
+function getProductLink(product) {
+    return 'product.html?slug=' + encodeURIComponent(product.slug || '');
+}
+
+function stockLabel(status) {
+    if (status === 'sold_out') return 'STOK HABIS';
+    if (status === 'coming_soon') return 'SEGERA HADIR';
+    return 'READY STOCK';
+}
+
+function productCard(product) {
+    const name = escapeHTML(product.name);
+    const category = escapeHTML(product.categories?.name || 'Produk');
+    const photo = product.photos?.[0];
+    const detailLink = getProductLink(product);
+
+    const imageHTML = photo
+        ? `<img class="product-photo" src="${escapeHTML(photo)}" alt="${name}" loading="lazy">`
+        : `<div class="product-placeholder">FOTO BELUM TERSEDIA</div>`;
+
+    return `
+        <article class="product-card">
+            <a class="product-image-link" href="${detailLink}">
+                ${imageHTML}
+            </a>
+
+            <h3><a href="${detailLink}">${name}</a></h3>
+            <p class="product-category">${category}</p>
+            <p class="product-price">${formatPrice(product.price)}</p>
+            <p class="product-stock">${stockLabel(product.stock_status)}</p>
+
+            <div class="product-actions">
+                <a href="${detailLink}">DETAIL PRODUK</a>
+                <a class="wa" href="${WHATSAPP_LINK}" target="_blank" rel="noopener">WHATSAPP</a>
+            </div>
+        </article>
+    `;
+}
+
+function renderProducts(keyword = '') {
+    const search = keyword.toLowerCase().trim();
+
+    const filtered = allProducts.filter(product => {
+        const text = [
+            product.name,
+            product.description,
+            product.categories?.name
+        ].join(' ').toLowerCase();
+
+        return text.includes(search);
+    });
+
+    const featured = filtered
+        .filter(product => product.is_featured)
+        .slice(0, 4);
+
+    const newest = filtered.slice(0, 8);
+
+    featuredList.innerHTML = featured.length
+        ? featured.map(productCard).join('')
+        : '<p class="empty-message">Belum ada produk unggulan. Tandai produk sebagai unggulan melalui dashboard admin.</p>';
+
+    newList.innerHTML = newest.length
+        ? newest.map(productCard).join('')
+        : '<p class="empty-message">Produk tidak ditemukan.</p>';
+}
+
+function setCategoryImage(elementId, products) {
+    const element = document.getElementById(elementId);
+    const product = products.find(item => item.photos?.length);
+
+    if (!element || !product) return;
+
+    const photo = document.createElement('img');
+    photo.src = product.photos[0];
+    photo.alt = product.name;
+    photo.loading = 'lazy';
+
+    const fallback = element.querySelector('.category-fallback');
+    if (fallback) fallback.remove();
+
+    element.prepend(photo);
+}
+
+function setHeroImage(products) {
+    const hero = document.getElementById('heroVisual');
+    const product = products.find(item => item.photos?.length);
+
+    if (!hero || !product) return;
+
+    hero.href = getProductLink(product);
+
+    const image = document.createElement('img');
+    image.src = product.photos[0];
+    image.alt = product.name;
+    image.loading = 'eager';
+
+    const fallback = hero.querySelector('.no-photo');
+    if (fallback) fallback.remove();
+
+    hero.prepend(image);
+}
+
+async function loadProducts() {
+    const {data, error} = await supabase
+        .from('products')
+        .select('*, categories(name, description)')
+        .eq('is_published', true)
+        .order('created_at', {ascending:false});
+
+    if (error) {
+        console.error('Gagal memuat produk:', error);
+        featuredList.innerHTML = '<p class="empty-message">Produk belum dapat dimuat. Silakan refresh halaman.</p>';
+        newList.innerHTML = '';
+        return;
+    }
+
+    allProducts = data || [];
+
+    renderProducts();
+
+    const keychainProducts = allProducts.filter(
+        product => product.categories?.description === 'keychain'
+    );
+
+    const printProducts = allProducts.filter(
+        product => product.categories?.description === '3d-print'
+    );
+
+    setCategoryImage('keychainCategory', keychainProducts);
+    setCategoryImage('printCategory', printProducts);
+    setHeroImage(allProducts);
+}
+
+searchInput.addEventListener('input', () => {
+    renderProducts(searchInput.value);
+});
+
+loadProducts();
+</script>
+
+</body>
+</html>

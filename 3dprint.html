@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D PRINT | RENBO STUDIO</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;color:#111;background:#fff}
+a{color:inherit;text-decoration:none}
+
+header{
+    min-height:75px;padding:0 6%;display:flex;
+    align-items:center;justify-content:space-between;gap:20px;
+    border-bottom:1px solid #eee;background:white
+}
+.logo{font-size:23px;font-weight:900;letter-spacing:2px;white-space:nowrap}
+nav{display:flex;gap:25px;font-size:12px;font-weight:bold}
+nav a:hover{opacity:.5}
+.header-actions{display:flex;gap:10px}
+.icon-link{
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;flex-shrink:0;background:#fff;transition:.2s
+}
+.icon-link:hover{transform:scale(1.08)}
+.icon-link img{width:100%;height:100%;object-fit:cover;display:block}
+.shopee{background:#ee4d2d}
+.whatsapp{background:#25d366}
+
+.hero{padding:75px 6% 55px;text-align:center;background:#f5f5f5}
+.hero h1{font-size:clamp(38px,7vw,75px);font-weight:900;letter-spacing:-2px}
+.hero p{font-size:14px;color:#666;margin-top:18px}
+.hero-buttons{margin-top:25px}
+.btn{
+    display:inline-block;padding:14px 27px;background:#111;color:#fff;
+    border-radius:30px;font-size:12px;font-weight:bold
+}
+
+.section{padding:55px 6%}
+.section-heading{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:15px;margin-bottom:25px
+}
+.section-heading h2{font-size:25px;font-weight:900}
+.section-heading p{font-size:12px;color:#777;margin-top:7px}
+
+.category-list{display:flex;gap:10px;flex-wrap:wrap}
+.category-chip{
+    padding:12px 17px;border:1px solid #ddd;
+    border-radius:30px;background:white;color:#111;
+    font-size:11px;font-weight:bold;cursor:pointer
+}
+.category-chip.active,.category-chip:hover{
+    background:#111;color:white;border-color:#111
+}
+
+.filter-panel{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr auto;
+    gap:10px;margin-bottom:25px
+}
+.filter-control{
+    width:100%;min-width:0;padding:13px 14px;
+    border:1px solid #ddd;border-radius:5px;
+    background:#fff;font-size:12px;outline:none;color:#111
+}
+.filter-control:focus{border-color:#111}
+.reset-button{
+    border:1px solid #111;background:#111;color:#fff;
+    padding:13px 17px;border-radius:5px;
+    font-size:11px;font-weight:bold;cursor:pointer
+}
+.result-count{font-size:12px;color:#777;margin-bottom:18px}
+
+.product-grid{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:25px 18px
+}
+.product-card{min-width:0}
+.product-image-link{display:block;overflow:hidden;background:#eee}
+.product-photo,.product-placeholder{
+    width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#eee
+}
+.product-photo{transition:transform .4s}
+.product-image-link:hover .product-photo{transform:scale(1.04)}
+.product-placeholder{
+    display:flex;align-items:center;justify-content:center;
+    color:#999;font-size:12px
+}
+.product-card h3{font-size:14px;margin-top:13px;line-height:1.5}
+.product-card h3 a:hover{text-decoration:underline}
+.product-card p{font-size:12px;color:#777;margin-top:6px;line-height:1.5}
+.price{font-size:14px!important;color:#111!important;font-weight:bold}
+.stock{font-size:11px!important;font-weight:bold}
+.product-actions{display:flex;gap:7px;margin-top:12px}
+.product-actions a{
+    flex:1;text-align:center;padding:10px 5px;
+    font-size:11px;border-radius:20px;background:#111;color:#fff
+}
+.product-actions .wa{background:#25d366}
+
+.feature{
+    margin:0 6% 60px;padding:55px 25px;
+    background:#111;color:#fff;text-align:center
+}
+.feature h2{font-size:clamp(27px,5vw,45px);font-weight:900}
+.feature p{
+    font-size:13px;color:#ccc;margin:15px auto 25px;
+    max-width:550px;line-height:1.7
+}
+
+footer{background:#f5f5f5;padding:40px 6%}
+.footer-content{display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap}
+footer h3{font-size:20px;margin-bottom:12px}
+footer p{font-size:13px;color:#666;line-height:1.9}
+.footer-social{display:flex;gap:12px;margin-top:15px}
+.footer-social a{
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;background:#fff;transition:.2s
+}
+.footer-social a:hover{transform:scale(1.08)}
+.footer-social img{width:100%;height:100%;object-fit:cover}
+.footer-bottom{
+    border-top:1px solid #ddd;margin-top:30px;
+    padding-top:20px;font-size:12px;color:#777
+}
+.empty-message{
+    font-size:14px;color:#777;padding:20px 0;
+    grid-column:1/-1;line-height:1.7
+}
+
+@media(max-width:950px){
+    header{flex-wrap:wrap;padding:18px 5%}
+    nav{order:3;width:100%;overflow-x:auto;padding-bottom:5px}
+    .header-actions{margin-left:auto}
+    .filter-panel{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .filter-panel .search-control{grid-column:1/-1}
+    .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:550px){
+    .logo{font-size:19px}
+    .icon-link{width:35px;height:35px}
+    .hero{padding:55px 5%}
+    .hero h1{letter-spacing:-1px}
+    .section{padding:40px 5%}
+    .section-heading h2{font-size:21px}
+    .filter-panel{grid-template-columns:1fr 1fr}
+    .filter-panel .search-control{grid-column:1/-1}
+    .filter-control{font-size:11px;padding:12px 10px}
+    .reset-button{font-size:10px;padding:12px 8px}
+    .product-grid{gap:22px 12px}
+    .product-card h3{font-size:12px}
+    .product-actions{gap:5px}
+    .product-actions a{font-size:9px;padding:10px 3px}
+    .feature{margin:0 5% 45px;padding:40px 15px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="index.html" class="logo">RENBO STUDIO</a>
+
+    <nav>
+        <a href="index.html">BERANDA</a>
+        <a href="keychain.html">GANTUNGAN KUNCI</a>
+        <a href="3dprint.html">3D PRINT</a>
+    </nav>
+
+    <div class="header-actions">
+        <a class="icon-link shopee"
+           href="https://s.shopee.co.id/6L5llZO3bk"
+           target="_blank" rel="noopener" aria-label="Shopee">
+            <img src="IMG_9864.jpeg" alt="Shopee">
+        </a>
+
+        <a class="icon-link whatsapp"
+           href="https://wa.me/message/C2DFXGQ6SEMGB1"
+           target="_blank" rel="noopener" aria-label="WhatsApp">
+            <img src="IMG_9865.webp" alt="WhatsApp">
+        </a>
+    </div>
+</header>
+
+<main>
+
+<section class="hero">
+    <h1>3D PRINT</h1>
+    <p>Produk fungsional dan kreatif untuk kebutuhan sehari-hari.</p>
+    <div class="hero-buttons">
+        <a href="#produk" class="btn">LIHAT PRODUK</a>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-heading">
+        <div>
+            <h2>KATEGORI PRODUK</h2>
+            <p>Pilih kategori produk yang ingin kamu lihat.</p>
+        </div>
+    </div>
+
+    <div class="category-list" id="categoryList">
+        <button class="category-chip active" data-category="all">SEMUA PRODUK</button>
+    </div>
+</section>
+
+<section class="section" id="produk">
+    <div class="section-heading">
+        <div>
+            <h2>SEMUA PRODUK 3D PRINT</h2>
+            <p>Temukan produk yang sesuai kebutuhanmu.</p>
+        </div>
+    </div>
+
+    <div class="filter-panel">
+        <input
+            type="search"
+            id="searchInput"
+            class="filter-control search-control"
+            placeholder="Cari nama produk..."
+        >
+
+        <select id="sortSelect" class="filter-control">
+            <option value="newest">Terbaru</option>
+            <option value="price-low">Harga termurah</option>
+            <option value="price-high">Harga termahal</option>
+            <option value="name">Nama A–Z</option>
+        </select>
+
+        <select id="stockSelect" class="filter-control">
+            <option value="all">Semua stok</option>
+            <option value="ready_stock">Ready stock</option>
+            <option value="sold_out">Stok habis</option>
+            <option value="coming_soon">Segera hadir</option>
+        </select>
+
+        <select id="categorySelect" class="filter-control">
+            <option value="all">Semua kategori</option>
+        </select>
+
+        <button id="resetButton" class="reset-button">RESET</button>
+    </div>
+
+    <p class="result-count" id="resultCount">Memuat produk...</p>
+
+    <div id="productList" class="product-grid">
+        <p class="empty-message">Memuat produk...</p>
+    </div>
+</section>
+
+<section class="feature">
+    <h2>FUNGSI DALAM SETIAP DESAIN.</h2>
+    <p>Produk 3D Print yang dirancang untuk membantu aktivitas sehari-hari menjadi lebih praktis dan rapi.</p>
+    <a href="https://wa.me/message/C2DFXGQ6SEMGB1"
+       target="_blank" rel="noopener" class="btn">HUBUNGI KAMI</a>
+</section>
+
+</main>
+
+<footer>
+    <div class="footer-content">
+        <div>
+            <h3>RENBO STUDIO</h3>
+            <p>Produk 3D Print & Custom Gantungan Kunci.</p>
+
+            <div class="footer-social">
+                <a href="https://s.shopee.co.id/6L5llZO3bk"
+                   target="_blank" rel="noopener" aria-label="Shopee">
+                    <img src="IMG_9864.jpeg" alt="Shopee">
+                </a>
+
+                <a href="https://wa.me/message/C2DFXGQ6SEMGB1"
+                   target="_blank" rel="noopener" aria-label="WhatsApp">
+                    <img src="IMG_9865.webp" alt="WhatsApp">
+                </a>
+            </div>
+        </div>
+
+        <div>
+            <h3>MENU</h3>
+            <p>
+                <a href="index.html">Beranda</a><br>
+                <a href="keychain.html">Gantungan Kunci</a><br>
+                <a href="3dprint.html">3D Print</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 RENBO STUDIO. All Rights Reserved.
+    </div>
+</footer>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+const productList = document.getElementById('productList');
+const searchInput = document.getElementById('searchInput');
+const sortSelect = document.getElementById('sortSelect');
+const stockSelect = document.getElementById('stockSelect');
+const categorySelect = document.getElementById('categorySelect');
+const categoryList = document.getElementById('categoryList');
+const resetButton = document.getElementById('resetButton');
+const resultCount = document.getElementById('resultCount');
+
+const WHATSAPP_LINK = 'https://wa.me/message/C2DFXGQ6SEMGB1';
+
+let allProducts = [];
+let activeCategory = 'all';
+
+function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+    })[char]);
+}
+
+function formatPrice(price) {
+    return 'Rp ' + Number(price || 0).toLocaleString('id-ID');
+}
+
+function stockLabel(status) {
+    if (status === 'sold_out') return 'STOK HABIS';
+    if (status === 'coming_soon') return 'SEGERA HADIR';
+    return 'READY STOCK';
+}
+
+function productCard(product) {
+    const name = escapeHTML(product.name);
+    const description = escapeHTML(product.description || 'Produk 3D Print Renbo Studio');
+    const category = escapeHTML(product.categories?.name || '3D Print');
+    const photo = product.photos?.[0];
+    const status = escapeHTML(stockLabel(product.stock_status));
+    const detailLink = 'product.html?slug=' + encodeURIComponent(product.slug || '');
+
+    const imageHTML = photo
+        ? `<img class="product-photo" src="${escapeHTML(photo)}" alt="${name}" loading="lazy">`
+        : `<div class="product-placeholder">FOTO BELUM TERSEDIA</div>`;
+
+    return `
+        <article class="product-card">
+            <a href="${detailLink}" class="product-image-link">
+                ${imageHTML}
+            </a>
+
+            <a href="${detailLink}">
+                <h3>${name}</h3>
+            </a>
+
+            <p>${category}</p>
+            <p class="price">${formatPrice(product.price)}</p>
+            <p>${description}</p>
+            <p class="stock">${status}</p>
+
+            <div class="product-actions">
+                <a href="${detailLink}">DETAIL PRODUK</a>
+                <a class="wa" href="${WHATSAPP_LINK}" target="_blank" rel="noopener">WHATSAPP</a>
+            </div>
+        </article>
+    `;
+}
+
+function buildCategories() {
+    const categories = [];
+
+    allProducts.forEach(product => {
+        const category = product.categories;
+
+        if (category?.name && !categories.some(item => item.name === category.name)) {
+            categories.push({
+                name: category.name,
+                id: product.category_id
+            });
+        }
+    });
+
+    categoryList.innerHTML = `
+        <button class="category-chip active" data-category="all">SEMUA PRODUK</button>
+        ${categories.map(category => `
+            <button class="category-chip" data-category="${escapeHTML(category.id)}">
+                ${escapeHTML(category.name.toUpperCase())}
+            </button>
+        `).join('')}
+    `;
+
+    categorySelect.innerHTML = `
+        <option value="all">Semua kategori</option>
+        ${categories.map(category => `
+            <option value="${escapeHTML(category.id)}">${escapeHTML(category.name)}</option>
+        `).join('')}
+    `;
+
+    categoryList.querySelectorAll('.category-chip').forEach(button => {
+        button.addEventListener('click', () => {
+            activeCategory = button.dataset.category;
+            categorySelect.value = activeCategory;
+
+            categoryList.querySelectorAll('.category-chip').forEach(item => {
+                item.classList.toggle('active', item === button);
+            });
+
+            renderProducts();
+        });
+    });
+}
+
+function renderProducts() {
+    const keyword = searchInput.value.toLowerCase().trim();
+    const stock = stockSelect.value;
+    const category = categorySelect.value;
+    const sort = sortSelect.value;
+
+    let filtered = allProducts.filter(product => {
+        const text = [
+            product.name,
+            product.description,
+            product.categories?.name
+        ].join(' ').toLowerCase();
+
+        const matchesSearch = text.includes(keyword);
+        const matchesStock = stock === 'all' || product.stock_status === stock;
+        const matchesCategory = category === 'all' || product.category_id === category;
+
+        return matchesSearch && matchesStock && matchesCategory;
+    });
+
+    if (sort === 'price-low') {
+        filtered.sort((a,b) => Number(a.price || 0) - Number(b.price || 0));
+    } else if (sort === 'price-high') {
+        filtered.sort((a,b) => Number(b.price || 0) - Number(a.price || 0));
+    } else if (sort === 'name') {
+        filtered.sort((a,b) => (a.name || '').localeCompare(b.name || '', 'id'));
+    } else {
+        filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    resultCount.textContent = `Menampilkan ${filtered.length} dari ${allProducts.length} produk`;
+
+    productList.innerHTML = filtered.length
+        ? filtered.map(productCard).join('')
+        : '<p class="empty-message">Produk tidak ditemukan. Coba ubah pencarian atau filter kamu.</p>';
+}
+
+function resetFilters() {
+    searchInput.value = '';
+    sortSelect.value = 'newest';
+    stockSelect.value = 'all';
+    categorySelect.value = 'all';
+    activeCategory = 'all';
+
+    categoryList.querySelectorAll('.category-chip').forEach(button => {
+        button.classList.toggle('active', button.dataset.category === 'all');
+    });
+
+    renderProducts();
+}
+
+async function loadProducts() {
+    productList.innerHTML = '<p class="empty-message">Memuat produk...</p>';
+
+    const {data,error} = await supabase
+        .from('products')
+        .select('*, categories(name, description)')
+        .eq('is_published', true)
+        .order('created_at', {ascending:false});
+
+    if (error) {
+        console.error('Gagal memuat produk:', error);
+        productList.innerHTML = '<p class="empty-message">Produk belum dapat dimuat. Silakan coba lagi nanti.</p>';
+        resultCount.textContent = 'Produk tidak dapat dimuat';
+        return;
+    }
+
+    allProducts = (data || []).filter(product =>
+        product.categories?.description === '3d-print'
+    );
+
+    buildCategories();
+    renderProducts();
+}
+
+searchInput.addEventListener('input', renderProducts);
+sortSelect.addEventListener('change', renderProducts);
+stockSelect.addEventListener('change', renderProducts);
+
+categorySelect.addEventListener('change', () => {
+    activeCategory = categorySelect.value;
+
+    categoryList.querySelectorAll('.category-chip').forEach(button => {
+        button.classList.toggle('active', button.dataset.category === activeCategory);
+    });
+
+    renderProducts();
+});
+
+resetButton.addEventListener('click', resetFilters);
+
+loadProducts();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Admin | RENBO STUDIO</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#171717}
+header{background:#111;color:white;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px}
+header h2{font-size:20px;letter-spacing:2px}
+button{cursor:pointer;border:0;border-radius:8px;padding:13px 18px;font-weight:bold}
+button:disabled{opacity:.5;cursor:not-allowed}
+.logout{background:white;color:#111}
+main{max-width:1100px;margin:30px auto;padding:0 18px}
+h1{font-size:28px;margin-bottom:8px}
+.subtitle{color:#777;margin-bottom:25px;font-size:14px}
+.panel{background:white;padding:25px;border-radius:14px;margin-bottom:22px;box-shadow:0 2px 12px #00000008}
+.panel h2{font-size:20px;margin-bottom:20px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:22px}
+.stat{background:white;padding:22px;border-radius:12px}
+.stat p{font-size:13px;color:#777}
+.stat strong{display:block;font-size:28px;margin-top:10px}
+label{display:block;font-size:13px;font-weight:bold;margin:17px 0 8px}
+input,select,textarea{width:100%;padding:13px;border:1px solid #ddd;border-radius:8px;font:inherit;background:white}
+textarea{min-height:100px;resize:vertical}
+input[type=file]{background:#fafafa}
+input[type=checkbox]{width:auto}
+.check{display:flex;align-items:center;gap:9px;margin:17px 0}
+.check label{margin:0}
+.primary{width:100%;background:#111;color:white;margin-top:15px}
+.secondary{background:#eee;color:#111}
+.danger{background:#ffe7e7;color:#b00020}
+.hint{font-size:12px;color:#777;line-height:1.6;margin-top:8px}
+.preview-grid,.existing-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
+.preview-item img,.existing-item img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;background:#eee}
+.existing-item{background:#f4f4f4;padding:7px;border-radius:8px}
+.existing-item label{font-size:11px;font-weight:normal;display:flex;align-items:center;gap:5px;margin:7px 0 0}
+.video-preview{max-width:350px;width:100%;margin-top:12px;border-radius:8px}
+.product-list{display:grid;gap:12px}
+.product{display:flex;gap:15px;align-items:center;border:1px solid #eee;padding:12px;border-radius:10px}
+.product img{width:85px;height:85px;object-fit:cover;background:#eee;border-radius:7px}
+.product-info{flex:1;min-width:0}
+.product-info h3{font-size:15px;margin-bottom:6px}
+.product-info p{font-size:12px;color:#777;margin-top:4px}
+.product-actions{display:flex;gap:7px;flex-wrap:wrap}
+.product-actions button,.comment-actions button{padding:9px 12px;font-size:11px}
+.category-row{padding:12px 0;border-bottom:1px solid #eee;font-size:14px}
+.message{padding:13px;background:#eee;border-radius:8px;font-size:13px;margin-bottom:15px;display:none;white-space:pre-line}
+.message.error{background:#ffe7e7;color:#a00000}
+.message.success{background:#e4f7e9;color:#126b2c}
+.comment-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px;flex-wrap:wrap}
+.comment-toolbar select{max-width:230px}
+.comment-list{display:grid;gap:12px}
+.comment-card{border:1px solid #e8e8e8;border-radius:10px;padding:16px}
+.comment-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:9px}
+.comment-top h3{font-size:15px}
+.comment-meta{font-size:12px;color:#777;margin-top:5px}
+.comment-status{font-size:11px;font-weight:bold;padding:6px 9px;border-radius:20px;background:#fff3d8;color:#8a5a00;white-space:nowrap}
+.comment-status.approved{background:#e4f7e9;color:#126b2c}
+.comment-body{font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 14px}
+.comment-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty-comments{padding:18px;background:#fafafa;border-radius:9px;color:#777;font-size:13px}
+.hidden{display:none!important}
+@media(max-width:650px){
+.stats{grid-template-columns:1fr 1fr}
+.preview-grid,.existing-grid{grid-template-columns:repeat(3,1fr)}
+.product{align-items:flex-start;flex-wrap:wrap}
+.product img{width:70px;height:70px}
+.product-actions{width:100%}
+.product-actions button{flex:1}
+.panel{padding:18px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>RENBO STUDIO</h2>
+<button class="logout" id="logoutButton">LOGOUT</button>
+</header>
+
+<main>
+
+<h1>Dashboard Admin</h1>
+<p class="subtitle">Kelola produk RENBO STUDIO di sini.</p>
+
+<div id="globalMessage" class="message"></div>
+
+<section class="stats">
+<div class="stat">
+<p>Total Produk</p>
+<strong id="totalProducts">0</strong>
+</div>
+<div class="stat">
+<p>Produk Ditampilkan</p>
+<strong id="publishedProducts">0</strong>
+</div>
+<div class="stat">
+<p>Total Kategori</p>
+<strong id="totalCategories">0</strong>
+</div>
+</section>
+
+<section class="panel">
+<h2 id="formTitle">Tambah Produk Baru</h2>
+
+<form id="productForm">
+
+<label>Nama Produk</label>
+<input id="productName" required placeholder="Contoh: Phone Holder">
+
+<label>Kategori</label>
+<select id="productCategory" required>
+<option value="">Pilih kategori</option>
+</select>
+
+<label>Harga (Rupiah)</label>
+<input id="productPrice" type="number" min="0" required placeholder="Contoh: 35000">
+
+<label>Deskripsi Produk</label>
+<textarea id="productDescription" placeholder="Tulis deskripsi produk..."></textarea>
+
+<label>Foto Produk (Maksimal 10 foto)</label>
+<input id="productPhotos" type="file" accept="image/*" multiple>
+<p class="hint">Pilih beberapa foto sekaligus. Maksimal 10 foto total per produk.</p>
+<div id="newPhotoPreview" class="preview-grid"></div>
+
+<div id="existingPhotoSection" class="hidden">
+<label>Foto yang sudah tersimpan</label>
+<p class="hint">Centang foto yang ingin dihapus. Foto yang tidak dicentang tetap disimpan.</p>
+<div id="existingPhotoPreview" class="existing-grid"></div>
+</div>
+
+<label>Video Produk (Opsional, 1 video)</label>
+<input id="productVideo" type="file" accept="video/*">
+<p class="hint">Upload satu video untuk memperlihatkan produk.</p>
+
+<div id="existingVideoSection" class="hidden">
+<p class="hint">Video saat ini:</p>
+<video id="existingVideo" class="video-preview" controls></video>
+<div class="check">
+<input type="checkbox" id="removeVideo">
+<label for="removeVideo">Hapus video lama</label>
+</div>
+</div>
+
+<div id="newVideoPreview"></div>
+
+<label>Status Stok</label>
+<select id="stockStatus">
+<option value="ready_stock">Ready Stock</option>
+<option value="sold_out">Sold Out</option>
+<option value="coming_soon">Coming Soon</option>
+</select>
+
+<div class="check">
+<input type="checkbox" id="isFeatured">
+<label for="isFeatured">Produk Unggulan</label>
+</div>
+
+<div class="check">
+<input type="checkbox" id="isPublished" checked>
+<label for="isPublished">Tampilkan di Website</label>
+</div>
+
+<button type="submit" class="primary" id="saveButton">SIMPAN PRODUK</button>
+<button type="button" class="secondary hidden" id="cancelEdit" style="width:100%;margin-top:10px">BATAL EDIT</button>
+
+</form>
+</section>
+
+<section class="panel">
+<h2>Daftar Produk</h2>
+<div id="productList" class="product-list">Memuat produk...</div>
+</section>
+
+<section class="panel">
+<h2>Moderasi Komentar</h2>
+
+<div class="comment-toolbar">
+<p class="hint" style="margin:0">Komentar baru harus disetujui sebelum tampil di website.</p>
+<select id="commentFilter" aria-label="Filter komentar">
+<option value="pending">Menunggu persetujuan</option>
+<option value="approved">Sudah disetujui</option>
+<option value="all">Semua komentar</option>
+</select>
+</div>
+
+<p class="hint" id="pendingCommentCount" style="margin:0 0 12px">Memuat jumlah komentar...</p>
+<div id="commentList" class="comment-list">Memuat komentar...</div>
+</section>
+
+<section class="panel">
+<h2>Tambah Kategori</h2>
+
+<form id="categoryForm">
+<label>Nama Kategori</label>
+<input id="categoryName" required placeholder="Contoh: Phone Holder">
+
+<label>Untuk bagian website</label>
+<select id="categoryType" required>
+<option value="3d-print">3D Print</option>
+<option value="keychain">Gantungan Kunci</option>
+</select>
+
+<button class="primary" type="submit">TAMBAH KATEGORI</button>
+</form>
+</section>
+
+<section class="panel">
+<h2>Daftar Kategori</h2>
+<div id="categoryList">Memuat kategori...</div>
+</section>
+
+</main>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+const BUCKET = 'product-images';
+
+let editingId = null;
+let currentPhotos = [];
+let currentVideo = null;
+let categories = [];
+
+const $ = id => document.getElementById(id);
+
+function showMessage(message, type = 'success') {
+    const box = $('globalMessage');
+    box.textContent = message;
+    box.className = 'message ' + type;
+    box.style.display = 'block';
+    box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function hideMessage() {
+    $('globalMessage').style.display = 'none';
+}
+
+function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+    })[char]);
+}
+
+function makeSlug(value) {
+    return value.toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g,'-')
+        .replace(/^-|-$/g,'') || 'produk';
+}
+
+function formatPrice(value) {
+    return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
+}
+
+function getPublicUrl(path) {
+    return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
+function filePath(file) {
+    const extension = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'');
+    return `${Date.now()}-${crypto.randomUUID()}.${extension || 'bin'}`;
+}
+
+async function uploadFile(file) {
+    const path = filePath(file);
+
+    const {error} = await supabase.storage.from(BUCKET).upload(path, file, {
+        upsert:false,
+        contentType:file.type || undefined
+    });
+
+    if (error) throw error;
+
+    return getPublicUrl(path);
+}
+
+async function checkAdmin() {
+    const {data:{session}, error} = await supabase.auth.getSession();
+
+    if (error || !session) {
+        window.location.href = 'admin.html';
+        return false;
+    }
+
+    const {data, error:adminError} = await supabase.rpc('is_admin');
+
+    if (adminError || data !== true) {
+        await supabase.auth.signOut();
+        window.location.href = 'admin.html';
+        return false;
+    }
+
+    return true;
+}
+
+async function loadCategories() {
+    const {data, error} = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+
+    if (error) throw error;
+
+    categories = data || [];
+
+    $('productCategory').innerHTML =
+        '<option value="">Pilih kategori</option>' +
+        categories.map(category =>
+            `<option value="${category.id}">${escapeHTML(category.name)}</option>`
+        ).join('');
+
+    $('totalCategories').textContent = categories.length;
+
+    $('categoryList').innerHTML = categories.length
+        ? categories.map(category => `
+            <div class="category-row">
+                <span>${escapeHTML(category.name)} — ${category.description === 'keychain' ? 'Gantungan Kunci' : '3D Print'}</span>
+            </div>
+        `).join('')
+        : 'Belum ada kategori.';
+}
+
+async function loadProducts() {
+    const {data, error} = await supabase
+        .from('products')
+        .select('*, categories(name)')
+        .order('created_at', {ascending:false});
+
+    if (error) throw error;
+
+    const products = data || [];
+
+    $('totalProducts').textContent = products.length;
+    $('publishedProducts').textContent =
+        products.filter(product => product.is_published).length;
+
+    if (!products.length) {
+        $('productList').innerHTML = 'Belum ada produk. Silakan tambahkan produk pertama.';
+        return;
+    }
+
+    $('productList').innerHTML = products.map(product => {
+        const photo = product.photos?.[0];
+
+        const image = photo
+            ? `<img src="${escapeHTML(photo)}" alt="">`
+            : `<img src="" alt="Belum ada foto">`;
+
+        return `
+            <div class="product">
+                ${image}
+                <div class="product-info">
+                    <h3>${escapeHTML(product.name)}</h3>
+                    <p>${escapeHTML(product.categories?.name || 'Tanpa kategori')}</p>
+                    <p>${formatPrice(product.price)}</p>
+                    <p>${product.is_published ? 'Tampil di website' : 'Disembunyikan'}</p>
+                    <p>${(product.photos || []).length} foto · ${product.video_url ? 'Ada video' : 'Tanpa video'}</p>
+                </div>
+                <div class="product-actions">
+                    <button class="secondary" data-edit="${product.id}">EDIT</button>
+                    <button class="danger" data-delete="${product.id}">HAPUS</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.querySelectorAll('[data-edit]').forEach(button => {
+        button.addEventListener('click', () => {
+            const product = products.find(item => item.id === button.dataset.edit);
+            if (product) editProduct(product);
+        });
+    });
+
+    document.querySelectorAll('[data-delete]').forEach(button => {
+        button.addEventListener('click', () => deleteProduct(button.dataset.delete));
+    });
+}
+
+/* =========================
+   MODERASI KOMENTAR
+========================= */
+
+async function loadComments() {
+    const filter = $('commentFilter').value;
+
+    const {data, error} = await supabase
+        .from('product_comments')
+        .select('id, product_id, visitor_name, comment, is_approved, created_at, products(name)')
+        .order('created_at', {ascending:false});
+
+    if (error) throw error;
+
+    const comments = data || [];
+
+    const pendingCount = comments.filter(item => !item.is_approved).length;
+
+    $('pendingCommentCount').textContent =
+        `${pendingCount} komentar menunggu persetujuan · ${comments.length} total komentar`;
+
+    const visible = comments.filter(item => {
+        if (filter === 'pending') return !item.is_approved;
+        if (filter === 'approved') return item.is_approved;
+        return true;
+    });
+
+    if (!visible.length) {
+        $('commentList').innerHTML =
+            '<div class="empty-comments">Tidak ada komentar pada pilihan ini.</div>';
+        return;
+    }
+
+    $('commentList').innerHTML = visible.map(item => {
+        const date = item.created_at
+            ? new Date(item.created_at).toLocaleString('id-ID')
+            : '-';
+
+        const approved = !!item.is_approved;
+
+        return `
+            <article class="comment-card">
+                <div class="comment-top">
+                    <div>
+                        <h3>${escapeHTML(item.visitor_name || 'Pengunjung')}</h3>
+                        <p class="comment-meta">
+                            Produk: ${escapeHTML(item.products?.name || 'Produk tidak ditemukan')}
+                            · ${escapeHTML(date)}
+                        </p>
+                    </div>
+                    <span class="comment-status ${approved ? 'approved' : ''}">
+                        ${approved ? 'Disetujui' : 'Menunggu'}
+                    </span>
+                </div>
+
+                <p class="comment-body">${escapeHTML(item.comment)}</p>
+
+                <div class="comment-actions">
+                    <button
+                        class="${approved ? 'secondary' : 'primary'}"
+                        data-comment-toggle="${item.id}"
+                        data-approved="${approved ? 'true' : 'false'}">
+                        ${approved ? 'SEMBUNYIKAN' : 'SETUJUI'}
+                    </button>
+
+                    <button class="danger" data-comment-delete="${item.id}">
+                        HAPUS
+                    </button>
+                </div>
+            </article>
+        `;
+    }).join('');
+
+    document.querySelectorAll('[data-comment-toggle]').forEach(button => {
+        button.addEventListener('click', () => {
+            toggleCommentApproval(
+                button.dataset.commentToggle,
+                button.dataset.approved === 'true'
+            );
+        });
+    });
+
+    document.querySelectorAll('[data-comment-delete]').forEach(button => {
+        button.addEventListener('click', () => {
+            deleteComment(button.dataset.commentDelete);
+        });
+    });
+}
+
+async function toggleCommentApproval(id, currentlyApproved) {
+    const nextStatus = !currentlyApproved;
+
+    const message = nextStatus
+        ? 'Setujui komentar ini agar tampil di website?'
+        : 'Sembunyikan komentar ini dari website?';
+
+    if (!confirm(message)) return;
+
+    try {
+        const {error} = await supabase
+            .from('product_comments')
+            .update({is_approved:nextStatus})
+            .eq('id', id);
+
+        if (error) throw error;
+
+        await loadComments();
+
+        showMessage(
+            nextStatus
+                ? 'Komentar berhasil disetujui.'
+                : 'Komentar berhasil disembunyikan.',
+            'success'
+        );
+
+    } catch (error) {
+        showMessage('Gagal mengubah status komentar: ' + error.message, 'error');
+    }
+}
+
+async function deleteComment(id) {
+    if (!confirm('Yakin ingin menghapus komentar ini secara permanen?')) return;
+
+    try {
+        const {error} = await supabase
+            .from('product_comments')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        await loadComments();
+        showMessage('Komentar berhasil dihapus.', 'success');
+
+    } catch (error) {
+        showMessage('Gagal menghapus komentar: ' + error.message, 'error');
+    }
+}
+
+$('commentFilter').addEventListener('change', async () => {
+    try {
+        await loadComments();
+    } catch (error) {
+        $('commentList').textContent = 'Gagal memuat komentar: ' + error.message;
+    }
+});
+
+/* =========================
+   EDIT PRODUK
+========================= */
+
+function showExistingPhotos() {
+    const section = $('existingPhotoSection');
+    const preview = $('existingPhotoPreview');
+
+    if (!editingId || !currentPhotos.length) {
+        section.classList.add('hidden');
+        preview.innerHTML = '';
+        return;
+    }
+
+    section.classList.remove('hidden');
+
+    preview.innerHTML = currentPhotos.map((photo, index) => `
+        <div class="existing-item">
+            <img src="${escapeHTML(photo)}" alt="Foto ${index + 1}">
+            <label>
+                <input type="checkbox" class="remove-old-photo" value="${index}">
+                Hapus foto
+            </label>
+        </div>
+    `).join('');
+}
+
+function editProduct(product) {
+    editingId = product.id;
+    currentPhotos = Array.isArray(product.photos) ? [...product.photos] : [];
+    currentVideo = product.video_url || null;
+
+    $('formTitle').textContent = 'Edit Produk';
+    $('productName').value = product.name || '';
+    $('productCategory').value = product.category_id || '';
+    $('productPrice').value = product.price || 0;
+    $('productDescription').value = product.description || '';
+    $('stockStatus').value = product.stock_status || 'ready_stock';
+    $('isFeatured').checked = !!product.is_featured;
+    $('isPublished').checked = !!product.is_published;
+    $('productPhotos').value = '';
+    $('productVideo').value = '';
+    $('removeVideo').checked = false;
+
+    $('cancelEdit').classList.remove('hidden');
+    $('saveButton').textContent = 'SIMPAN PERUBAHAN';
+
+    showExistingPhotos();
+
+    if (currentVideo) {
+        $('existingVideoSection').classList.remove('hidden');
+        $('existingVideo').src = currentVideo;
+    } else {
+        $('existingVideoSection').classList.add('hidden');
+        $('existingVideo').removeAttribute('src');
+    }
+
+    $('productForm').scrollIntoView({behavior:'smooth'});
+}
+
+function resetForm() {
+    editingId = null;
+    currentPhotos = [];
+    currentVideo = null;
+
+    $('productForm').reset();
+    $('isPublished').checked = true;
+    $('stockStatus').value = 'ready_stock';
+    $('formTitle').textContent = 'Tambah Produk Baru';
+    $('saveButton').textContent = 'SIMPAN PRODUK';
+    $('cancelEdit').classList.add('hidden');
+    $('existingPhotoSection').classList.add('hidden');
+    $('existingVideoSection').classList.add('hidden');
+    $('existingVideo').removeAttribute('src');
+    $('newPhotoPreview').innerHTML = '';
+    $('newVideoPreview').innerHTML = '';
+    $('productPhotos').value = '';
+    $('productVideo').value = '';
+}
+
+/* =========================
+   PREVIEW FOTO DAN VIDEO
+========================= */
+
+$('productPhotos').addEventListener('change', () => {
+    const files = Array.from($('productPhotos').files || []);
+
+    const remaining = currentPhotos.length -
+        document.querySelectorAll('.remove-old-photo:checked').length;
+
+    if (remaining + files.length > 10) {
+        showMessage(
+            `Maksimal 10 foto. Saat ini masih ada ${remaining} foto lama.`,
+            'error'
+        );
+
+        $('productPhotos').value = '';
+        $('newPhotoPreview').innerHTML = '';
+        return;
+    }
+
+    $('newPhotoPreview').innerHTML = files.map((file, index) => {
+        const url = URL.createObjectURL(file);
+
+        return `
+            <div class="preview-item">
+                <img src="${url}" alt="Foto baru ${index + 1}">
+            </div>
+        `;
+    }).join('');
+});
+
+$('productVideo').addEventListener('change', () => {
+    const file = $('productVideo').files[0];
+
+    if (!file) {
+        $('newVideoPreview').innerHTML = '';
+        return;
+    }
+
+    const url = URL.createObjectURL(file);
+
+    $('newVideoPreview').innerHTML =
+        `<video class="video-preview" src="${url}" controls></video>`;
+});
+
+/* =========================
+   SIMPAN PRODUK
+========================= */
+
+$('productForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    hideMessage();
+
+    const button = $('saveButton');
+    button.disabled = true;
+    button.textContent = 'MENYIMPAN...';
+
+    try {
+        const name = $('productName').value.trim();
+        const categoryId = $('productCategory').value;
+        const price = Number($('productPrice').value);
+        const description = $('productDescription').value.trim();
+
+        if (!categoryId) {
+            throw new Error('Silakan pilih kategori produk.');
+        }
+
+        const selectedCategory = categories.find(item => item.id === categoryId);
+
+        if (!selectedCategory) {
+            throw new Error('Kategori tidak ditemukan.');
+        }
+
+        const removedIndexes = Array.from(
+            document.querySelectorAll('.remove-old-photo:checked')
+        ).map(input => Number(input.value));
+
+        let photos = currentPhotos.filter((photo, index) =>
+            !removedIndexes.includes(index)
+        );
+
+        const photoFiles = Array.from($('productPhotos').files || []);
+
+        if (photos.length + photoFiles.length > 10) {
+            throw new Error('Maksimal 10 foto untuk satu produk.');
+        }
+
+        for (const file of photoFiles) {
+            if (!file.type.startsWith('image/')) {
+                throw new Error('File foto harus berupa gambar.');
+            }
+
+            photos.push(await uploadFile(file));
+        }
+
+        let videoUrl = currentVideo;
+        const newVideo = $('productVideo').files[0];
+
+        if ($('removeVideo').checked) {
+            videoUrl = null;
+        }
+
+        if (newVideo) {
+            if (!newVideo.type.startsWith('video/')) {
+                throw new Error('File video tidak valid.');
+            }
+
+            videoUrl = await uploadFile(newVideo);
+        }
+
+        const slug = makeSlug(name);
+
+        const payload = {
+            category_id:categoryId,
+            name,
+            slug:editingId
+                ? slug + '-' + editingId.slice(0,8)
+                : slug + '-' + Date.now(),
+            description,
+            price,
+            photos,
+            video_url:videoUrl,
+            stock_status:$('stockStatus').value,
+            is_featured:$('isFeatured').checked,
+            is_published:$('isPublished').checked,
+            updated_at:new Date().toISOString()
+        };
+
+        let result;
+
+        if (editingId) {
+            result = await supabase
+                .from('products')
+                .update(payload)
+                .eq('id', editingId);
+        } else {
+            result = await supabase
+                .from('products')
+                .insert(payload);
+        }
+
+        if (result.error) throw result.error;
+
+        resetForm();
+        await loadProducts();
+
+        showMessage('Produk berhasil disimpan!', 'success');
+
+    } catch (error) {
+        console.error(error);
+
+        showMessage(
+            'Gagal menyimpan produk: ' + (error.message || error),
+            'error'
+        );
+
+    } finally {
+        button.disabled = false;
+        button.textContent = editingId
+            ? 'SIMPAN PERUBAHAN'
+            : 'SIMPAN PRODUK';
+    }
+});
+
+/* =========================
+   HAPUS PRODUK
+========================= */
+
+async function deleteProduct(id) {
+    if (!confirm('Yakin ingin menghapus produk ini?')) return;
+
+    try {
+        const {error} = await supabase
+            .from('products')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        await loadProducts();
+        showMessage('Produk berhasil dihapus.', 'success');
+
+    } catch (error) {
+        showMessage('Gagal menghapus produk: ' + error.message, 'error');
+    }
+}
+
+/* =========================
+   TAMBAH KATEGORI
+========================= */
+
+$('categoryForm').addEventListener('submit', async event => {
+    event.preventDefault();
+
+    try {
+        const name = $('categoryName').value.trim();
+        const type = $('categoryType').value;
+
+        const {error} = await supabase.from('categories').insert({
+            name,
+            slug:makeSlug(name) + '-' + Date.now(),
+            description:type,
+            is_active:true
+        });
+
+        if (error) throw error;
+
+        $('categoryForm').reset();
+
+        await loadCategories();
+
+        showMessage('Kategori berhasil ditambahkan.', 'success');
+
+    } catch (error) {
+        showMessage('Gagal menambahkan kategori: ' + error.message, 'error');
+    }
+});
+
+/* =========================
+   TOMBOL DAN MULAI DASHBOARD
+========================= */
+
+$('cancelEdit').addEventListener('click', resetForm);
+
+$('logoutButton').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = 'admin.html';
+});
+
+async function startDashboard() {
+    try {
+        const allowed = await checkAdmin();
+
+        if (!allowed) return;
+
+        await loadCategories();
+        await loadProducts();
+        await loadComments();
+
+    } catch (error) {
+        console.error(error);
+        showMessage('Gagal memuat dashboard: ' + error.message, 'error');
+    }
+}
+
+startDashboard();
+
+</script>
+
+</body>
+</html>
